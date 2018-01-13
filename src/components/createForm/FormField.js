@@ -9,7 +9,12 @@ class FormField extends Component {
       console.log(this.props.field.subField.length);
       return this.props.field.subField.map((currSubField, index) => {
         currSubField.key = this.props.field.key + "_subField" + index;
-        return <FormField field={currSubField} key={currSubField.key} isSubField={true} parentFieldType={this.props.field.type} />
+        return <FormField 
+                field={currSubField} 
+                key={currSubField.key} 
+                isSubField={true} 
+                parentFieldType={this.props.field.type}
+                updateData={this.updateData()} />
       })
     }
   }
@@ -29,7 +34,7 @@ class FormField extends Component {
                 conditionValue={this.props.field.conditionValue} 
                 parentFieldType={this.props.field.type} 
                 fieldKey={this.props.field.key}
-                updateData={this.updateData} />
+                updateData={this.updateData()} />
             ) : (
               ""
             )

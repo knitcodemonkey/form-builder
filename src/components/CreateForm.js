@@ -3,13 +3,17 @@ import PropTypes from 'prop-types';
 import FormField from './createForm/FormField.js'
 
 class CreateForm extends Component {
+  updateData() {
+    this.props.updateData();
+  }
+
   render() {
     return (
       <div className="createForm">
         {
           this.props.formFields.map((field, index) => {
             field.key = field.type + index
-            return <FormField field={field} key={field.key} updateData={this.props.updateData} />;
+            return <FormField field={field} key={field.key} updateData={this.updateData()} />;
           })
         }
         <button value="addField">Add Input</button>

@@ -66,7 +66,7 @@ class App extends Component {
             <TabPanel>
               <CreateForm
                 formFields={this.state.formFields}
-                updateData={this.updateData}
+                updateData={this.updateData()}
               />
             </TabPanel>
             <TabPanel>
