@@ -1,0 +1,44 @@
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tab {
+  border: none;
+  background: none;
+  margin: 10px 10px 0 10px;
+  padding: 10px 20px;
+  color: #000;
+  background-color: #ccc;
+  border-bottom: none;
+  border-top: 1px solid #999;
+  border-left: 1px solid #999;
+  border-right: 1px solid #999;
+}
+
+.tab.activeTab {
+  background-color: #FFF;
+}
+
+.tab.disabledTab {
+  margin: 10px 20px;
+  padding: 10px;
+  color: red;
+}
+
+.tabPanels {
+  border: 1px solid #999;
+  background-color: #fff;
+}
+
+.panel {
+  padding: 20px;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .tab {
+    padding: 10px;
+  }
+}
+
