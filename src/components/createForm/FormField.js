@@ -14,7 +14,7 @@ class FormField extends Component {
                 key={currSubField.key} 
                 isSubField={true} 
                 parentFieldType={this.props.field.type}
-                updateData={this.updateData()} />
+                updateData={this.updateData} />
       })
     }
   }
@@ -34,7 +34,7 @@ class FormField extends Component {
                 conditionValue={this.props.field.conditionValue} 
                 parentFieldType={this.props.field.type} 
                 fieldKey={this.props.field.key}
-                updateData={this.updateData()} />
+                updateData={this.updateData} />
             ) : (
               ""
             )

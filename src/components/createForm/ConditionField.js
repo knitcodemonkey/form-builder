@@ -38,7 +38,7 @@ class ConditionField extends Component {
           className="condition" 
           id={"conditional_" + this.props.fieldKey} 
           value={this.props.condition} 
-          onChange={this.updateData(this)}>
+          onChange={this.updateData}>
         {
           conditionOptions.map((option) => {
             return <option value={option.value} key={"conditional_" + this.props.fieldKey + option.value}>{option.label}</option>

@@ -13,7 +13,7 @@ class CreateForm extends Component {
         {
           this.props.formFields.map((field, index) => {
             field.key = field.type + index
-            return <FormField field={field} key={field.key} updateData={this.updateData()} />;
+            return <FormField field={field} key={field.key} updateData={this.updateData} />;
           })
         }
         <button value="addField">Add Input</button>
