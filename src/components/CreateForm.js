@@ -3,8 +3,25 @@ import PropTypes from 'prop-types';
 import FormField from './createForm/FormField.js'
 
 class CreateForm extends Component {
-  updateData() {
-    this.props.updateData();
+  constructor(props) {
+    super(props);
+    this.addField = this.addField.bind(this);
+    this.state = this.props;
+  }
+
+  addField() {
+    const formFields = this.props.formFields.slice(0);
+    console.log("create form - add field", formFields);
+    
+    formFields.push({question: '', type: 'bool'});
+    console.log("create form - add field", formFields);
+
+    this.setState({...formFields});
+  }
+
+  componentWillUnmount() {
+    console.log("componentWillUnmount", this.state);
+    this.props.updateData(this.state);
   }
 
   render() {
@@ -13,16 +30,17 @@ class CreateForm extends Component {
         {
           this.props.formFields.map((field, index) => {
             field.key = field.type + index
-            return <FormField field={field} key={field.key} updateData={this.updateData} />;
+            return <FormField field={field} conditions={this.props.conditions} key={field.key} updateData={this.props.updateData} />;
           })
         }
-        <button value="addField">Add Input</button>
+        <button value="addField" onClick={this.addField}>Add Input</button>
       </div>
     )
   }
 }
 
 CreateForm.propTypes = {
+  conditions: PropTypes.object.isRequired,
   formFields: PropTypes.array.isRequired,
   updateData: PropTypes.func.isRequired
 };

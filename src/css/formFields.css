@@ -85,3 +85,30 @@ button {
     width: 60vw;
   }
 }
+
+@media (min-width: 480px) {
+  label,
+  input, select,
+  input.condition , select.condition,
+  input.conditionValue, select.conditionValue  {
+    display: inline-block;
+  }
+
+  input, select {
+    width: calc(100% - 80px);
+  }
+
+  input.condition , select.condition,
+  input.conditionValue, select.conditionValue  {
+    width: calc((100% - 80px)/2 - 5px);
+  }
+
+  label {
+    width: 70px;
+    margin-top: 0;
+  }
+
+  .formField {
+    width: 60vw;
+  }
+}

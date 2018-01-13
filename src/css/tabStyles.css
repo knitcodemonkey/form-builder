@@ -42,3 +42,9 @@
   }
 }
 
+@media (min-width: 480px) {
+  .tab {
+    padding: 10px 20px;
+  }
+}
+

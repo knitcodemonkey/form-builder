@@ -11,29 +11,34 @@ import './css/styles.css';
 
 class App extends Component {
   state = {
+    conditions: {
+      text: ['Equals'],
+      number: ['Equals', 'Greater Than', 'Less Than'],
+      bool: ['Equals']
+    },
     formFields: [
       {
         question: "Do you own a car?",
         type: "bool",
         subField: [
           {
-            condition: "equals",
-            conditionValue: "yes",
+            condition: "Equals",
+            conditionValue: "Yes",
             question: "What is your car's Model?",
             type: "text",
             subField: [
               {
-                condition: "equals",
-                conditionValue: "yes",
-                question: "What is your car's Model?",
+                condition: "Equals",
+                conditionValue: "Ford",
+                question: "What color is your Ford?",
                 type: "text",
 
               },
               {
-                condition: "equals",
-                conditionValue: "yes",
-                question: "What is your car's Model?",
-                type: "text",
+                condition: "Equals",
+                conditionValue: "Ford",
+                question: "How many wheels on your Ford?",
+                type: "number",
 
               },
             ],
@@ -48,7 +53,11 @@ class App extends Component {
   }
   
   updateData(formFields) {
-    this.setState(formFields);
+    this.setState({...formFields});
+  }
+
+  componentWillUnmount() {
+    console.log("triggered updateData", this.state);
   }
 
   render() {
@@ -65,6 +74,7 @@ class App extends Component {
           <TabPanels>
             <TabPanel>
               <CreateForm
+                conditions={this.state.conditions}
                 formFields={this.state.formFields}
                 updateData={this.updateData}
               />
