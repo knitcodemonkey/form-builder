@@ -21,7 +21,7 @@ class CreateForm extends Component {
 
   componentWillUnmount() {
     console.log("componentWillUnmount", this.state);
-    this.props.updateData(this.state);
+    this.props.updateData(this.state.formFields);
   }
 
   render() {
