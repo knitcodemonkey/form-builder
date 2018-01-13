@@ -81,12 +81,12 @@ class App extends Component {
             </TabPanel>
             <TabPanel>
               <PreviewForm
-                data={this.state}
+                formFields={this.state.formFields}
               />
             </TabPanel>
             <TabPanel>
               <ExportJSON
-                data={this.state}
+                formFields={this.state.formFields}
               />
             </TabPanel>
           </TabPanels>

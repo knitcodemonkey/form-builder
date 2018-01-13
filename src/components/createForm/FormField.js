@@ -19,7 +19,7 @@ class FormField extends Component {
   }
 
   componentWillUnmount() {
-    this.props.updateData(this.state);
+    //this.props.updateData(this.state);
   }
 
   renderSubFields() {

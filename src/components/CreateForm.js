@@ -9,7 +9,8 @@ class CreateForm extends Component {
     this.state = this.props;
   }
 
-  addField() {
+  addField(e) {
+    e.preventDefault();
     const formFields = this.props.formFields.slice(0);
     console.log("create form - add field", formFields);
     
@@ -21,7 +22,7 @@ class CreateForm extends Component {
 
   componentWillUnmount() {
     console.log("componentWillUnmount", this.state);
-    this.props.updateData(this.state.formFields);
+    //this.props.updateData(this.state.formFields);
   }
 
   render() {
