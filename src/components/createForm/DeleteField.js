@@ -9,7 +9,7 @@ class DeleteField extends Component {
 
   deleteField(e) {
     e.preventDefault();
-    this.props.deleteField(this.props.id);
+    this.props.deleteField({ id: this.props.id }, "deleteField");
   }
 
   render() {

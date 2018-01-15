@@ -6,64 +6,90 @@ import AddField from "./createForm/AddField";
 class CreateForm extends Component {
   constructor(props) {
     super(props);
-    this.addField = this.addField.bind(this);
-    this.deleteField = this.deleteField.bind(this);
     this.updateField = this.updateField.bind(this);
-    this.state = {
-      formFields: this.props.formFields
-    };
   }
 
-  addField() {
-    const formFields = this.props.formFields.slice(0);
-    formFields.push({ question: "", type: "bool", id: formFields.length });
+  /**
+   *
+   * @param {Object} field
+   * @param {string} action
+   */
+  updateField(field, action) {
+    // make a copy of the old state so we can create the new state
+    let currField = this.props.formFields.slice();
+    // If the id doesn't exist (only happens when adding a field to the main-level), create it for addField actions
+    if (!field) {
+      let lastId = -1;
+      if (currField.length > 0) {
+        lastId = currField[currField.length - 1].id;
+      }
+      field = {
+        question: "",
+        type: "bool",
+        id: parseInt(lastId, 10) + 1
+      };
+    }
+    // split the id to find out how deep this rabbit hole goes.
+    const fieldMap = field.id.toString().split("_");
 
-    this.props.updateField(formFields);
-    this.setState({ formFields });
-  }
+    // if the id is at the main level, deal with it
+    if (fieldMap.length === 1) {
+      // The main level handles adding fields directly.
+      // Subfield additions are handled in the FormField component
+      // and added as an edit to the parent element
 
-  deleteField(fieldId) {
-    const fieldMap = fieldId.toString().split("_");
-    let currField = this.state.formFields.slice();
-    if (fieldMap.length > 1) {
-      let old = currField[fieldMap[0]];
+      switch (action) {
+        case "addField":
+          currField.push(field);
+          break;
+        case "editField":
+          currField[fieldMap[0]] = field;
+          break;
+        case "deleteField":
+          currField.splice(fieldMap[0], 1);
+          break;
+        default:
+          return;
+      }
+    } else {
+      // if the action is deeper, these are all in subFields
+      let old = currField[fieldMap[0]]; // updating one, updates both
+
+      // Map through our id to add/update/delete it's location
       fieldMap.map((val, idx) => {
         if (idx > 0 && idx + 1 !== fieldMap.length) {
-          old = old.subFields[val];
-        }
-        if (idx + 1 === fieldMap.length) {
-          old = old.subFields.splice(val, 1);
-        }
-        return true;
-      });
-    } else {
-      currField.splice(fieldMap[0], 1);
-    }
-    this.props.updateData(currField);
-    this.setState({ formFields: currField });
-  }
-
-  updateField(field) {
-    console.log(this.state.formFields);
-    const fieldMap = field.id.toString().split("_");
-    let currField = this.state.formFields.slice();
-    if (fieldMap.length === 1) {
-      // initial methods need to be handled directly
-      currField[fieldMap[0]] = field;
-    } else {
-      // these are all in subFields
-      let old = currField[fieldMap[0]]; // updating one, updates both
-      fieldMap.map((val, idx) => {
-        if (idx > 0) {
           // map to deeper form field inside `subFields`
           old = old.subFields[val];
         }
+
+        if (idx + 1 === fieldMap.length) {
+          switch (action) {
+            case "deleteField":
+              if (old.subFields.length === 1) {
+                delete old.subFields;
+              } else {
+                old = old.subFields.splice(val, 1);
+              }
+              break;
+            case "editField":
+              old.subFields[val] = field;
+              break;
+            case "addField":
+              // if subFields don't exist, we need to create it
+              if (parseInt(val, 10) === 0) {
+                old["subFields"] = [];
+              }
+              // add our field to the subFields array
+              old.subFields.push(field);
+              break;
+            default:
+              return true;
+          }
+        }
         return true;
       });
-      old = field;
     }
     this.props.updateData(currField);
-    this.setState({ formFields: currField });
   }
 
   render() {
@@ -76,18 +102,18 @@ class CreateForm extends Component {
               field={field}
               key={field.key}
               updateField={this.updateField}
-              deleteField={this.deleteField}
             />
           );
         })}
-        <AddField addField={this.addField} />
+        <AddField addField={this.updateField} />
       </div>
     );
   }
 }
 
 CreateForm.propTypes = {
-  formFields: PropTypes.array.isRequired
+  formFields: PropTypes.array.isRequired,
+  updateData: PropTypes.func.isRequired
 };
 
 export default CreateForm;
