@@ -1,49 +1,93 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import FormField from './createForm/FormField.js'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import FormField from "./createForm/FormField.js";
+import AddField from "./createForm/AddField";
 
 class CreateForm extends Component {
   constructor(props) {
     super(props);
     this.addField = this.addField.bind(this);
-    this.state = this.props;
+    this.deleteField = this.deleteField.bind(this);
+    this.updateField = this.updateField.bind(this);
+    this.state = {
+      formFields: this.props.formFields
+    };
   }
 
-  addField(e) {
-    e.preventDefault();
+  addField() {
     const formFields = this.props.formFields.slice(0);
-    console.log("create form - add field", formFields);
-    
-    formFields.push({question: '', type: 'bool'});
-    console.log("create form - add field", formFields);
+    formFields.push({ question: "", type: "bool", id: formFields.length });
 
-    this.setState({...formFields});
+    this.props.updateField(formFields);
+    this.setState({ formFields });
   }
 
-  componentWillUnmount() {
-    console.log("componentWillUnmount", this.state);
-    //this.props.updateData(this.state.formFields);
+  deleteField(fieldId) {
+    const fieldMap = fieldId.toString().split("_");
+    let currField = this.state.formFields.slice();
+    if (fieldMap.length > 1) {
+      let old = currField[fieldMap[0]];
+      fieldMap.map((val, idx) => {
+        if (idx > 0 && idx + 1 !== fieldMap.length) {
+          old = old.subFields[val];
+        }
+        if (idx + 1 === fieldMap.length) {
+          old = old.subFields.splice(val, 1);
+        }
+        return true;
+      });
+    } else {
+      currField.splice(fieldMap[0], 1);
+    }
+    this.props.updateData(currField);
+    this.setState({ formFields: currField });
+  }
+
+  updateField(field) {
+    console.log(this.state.formFields);
+    const fieldMap = field.id.toString().split("_");
+    let currField = this.state.formFields.slice();
+    if (fieldMap.length === 1) {
+      // initial methods need to be handled directly
+      currField[fieldMap[0]] = field;
+    } else {
+      // these are all in subFields
+      let old = currField[fieldMap[0]]; // updating one, updates both
+      fieldMap.map((val, idx) => {
+        if (idx > 0) {
+          // map to deeper form field inside `subFields`
+          old = old.subFields[val];
+        }
+        return true;
+      });
+      old = field;
+    }
+    this.props.updateData(currField);
+    this.setState({ formFields: currField });
   }
 
   render() {
     return (
       <div className="createForm">
-        {
-          this.props.formFields.map((field, index) => {
-            field.key = field.type + index
-            return <FormField field={field} conditions={this.props.conditions} key={field.key} updateData={this.props.updateData} />;
-          })
-        }
-        <button value="addField" onClick={this.addField}>Add Input</button>
+        {this.props.formFields.map((field, index) => {
+          field.key = field.type + index;
+          return (
+            <FormField
+              field={field}
+              key={field.key}
+              updateField={this.updateField}
+              deleteField={this.deleteField}
+            />
+          );
+        })}
+        <AddField addField={this.addField} />
       </div>
-    )
+    );
   }
 }
 
 CreateForm.propTypes = {
-  conditions: PropTypes.object.isRequired,
-  formFields: PropTypes.array.isRequired,
-  updateData: PropTypes.func.isRequired
+  formFields: PropTypes.array.isRequired
 };
 
 export default CreateForm;

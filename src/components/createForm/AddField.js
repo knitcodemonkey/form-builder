@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class AddField extends Component {
   constructor(props) {
@@ -9,20 +9,21 @@ class AddField extends Component {
 
   addField(e) {
     e.preventDefault();
-    this.props.addField(this.props.parentKey || false);
+    this.props.addField(this.props.parentId || false);
   }
 
   render() {
     return (
-      <button value="addField" onClick={this.addField}>{this.props.isSubField ? "Add Sub-Input" : "Add Input"}</button>
-    )
+      <button value="addField" onClick={this.addField}>
+        {this.props.parentId !== undefined ? "Add Sub-Input" : "Add Input"}
+      </button>
+    );
   }
 }
 
 AddField.propTypes = {
   addField: PropTypes.func.isRequired,
-  isSubField: PropTypes.bool,
-  parentKey: PropTypes.string,
+  parentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default AddField;
