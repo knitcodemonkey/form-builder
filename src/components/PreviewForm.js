@@ -1,7 +1,19 @@
-import React, { Component } from 'react';
+import React from "react";
+import PropTypes from "prop-types";
+import FormField from "./previewForm/PreviewFormField";
+import "../css/previewFields.css";
 
-export default class PreviewForm extends Component {
-  render() {
-    return <div>Preview Form</div>;
-  }
-}
+const PreviewForm = (props: { formFields: Array }) => (
+  <div className="PreviewForm">
+    {props.formFields.map((field, index) => {
+      field.key = field.type + index;
+      return <FormField field={field} key={field.key} />;
+    })}
+  </div>
+);
+
+PreviewForm.propTypes = {
+  formFields: PropTypes.array.isRequired
+};
+
+export default PreviewForm;

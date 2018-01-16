@@ -10,7 +10,6 @@ class FormField extends Component {
     super(props);
     this.updateFormField = this.updateFormField.bind(this);
     this.addField = this.addField.bind(this);
-    //this.updateSubField = this.updateSubField.bind(this);
     this.state = {
       formField: this.props.field
     };
@@ -25,15 +24,15 @@ class FormField extends Component {
     if (typeof currField.subFields === "undefined") {
       currField["subFields"] = [];
     } else {
-      lastId = currField.subFields[currField.subFields.length - 1].id;
+      lastId = currField.subFields[currField.subFields.length - 1].positionId;
       const lastIdArray = lastId.split("_");
       lastId = lastIdArray[lastIdArray.length - 1];
     }
 
     // Push  a new subField to the end of the stack
     const newSubField = {
-      id: currField.id + "_" + (parseInt(lastId, 10) + 1),
-      parentId: currField.id,
+      positionId: currField.positionId + "_" + (parseInt(lastId, 10) + 1),
+      parentId: currField.positionId,
       condition: "",
       conditionValue: "",
       question: "",
@@ -127,8 +126,11 @@ class FormField extends Component {
             </select>
           </div>
           <div className="actions">
-            <AddField addField={this.addField} parentId={field.id} />
-            <DeleteField deleteField={this.props.updateField} id={field.id} />
+            <AddField addField={this.addField} parentId={field.positionId} />
+            <DeleteField
+              deleteField={this.props.updateField}
+              positionId={field.positionId}
+            />
           </div>
         </div>
         {this.renderSubFields()}

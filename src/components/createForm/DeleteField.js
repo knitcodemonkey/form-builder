@@ -9,7 +9,10 @@ class DeleteField extends Component {
 
   deleteField(e) {
     e.preventDefault();
-    this.props.deleteField({ id: this.props.id }, "deleteField");
+    this.props.deleteField(
+      { positionId: this.props.positionId },
+      "deleteField"
+    );
   }
 
   render() {
@@ -23,7 +26,7 @@ class DeleteField extends Component {
 
 DeleteField.propTypes = {
   deleteField: PropTypes.func.isRequired,
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  positionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default DeleteField;

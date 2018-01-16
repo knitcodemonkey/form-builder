@@ -21,16 +21,16 @@ class CreateForm extends Component {
     if (!field) {
       let lastId = -1;
       if (currField.length > 0) {
-        lastId = currField[currField.length - 1].id;
+        lastId = currField[currField.length - 1].positionId;
       }
       field = {
         question: "",
         type: "bool",
-        id: parseInt(lastId, 10) + 1
+        positionId: parseInt(lastId, 10) + 1
       };
     }
     // split the id to find out how deep this rabbit hole goes.
-    const fieldMap = field.id.toString().split("_");
+    const fieldMap = field.positionId.toString().split("_");
 
     // if the id is at the main level, deal with it
     if (fieldMap.length === 1) {

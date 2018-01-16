@@ -16,6 +16,71 @@ class ConditionInput extends Component {
     this.updateFormField = this.updateFormField.bind(this);
   }
 
+  /**
+   * When the component mounts, double check the parentFieldType.
+   * If it changed, we need to update the conditionValues to no longer
+   * keep values that are invalid for its type
+   */
+  componentWillMount() {
+    this.updateConditionValue();
+    this.updateCondition();
+  }
+
+  /**
+   * double check the parentFieldType.
+   * If it changed, we need to update the conditionValues to no longer
+   * keep values that are invalid for its type
+   */
+  updateConditionValue() {
+    // fake event object
+    let e = {
+      target: {
+        id: "conditionValue_" + this.props.field.key,
+        value: this.props.field.conditionValue
+      }
+    };
+
+    // if conditionValue === Yes or No
+    const isBool = ["Yes", "No"].indexOf(this.props.field.conditionValue);
+    // for readability
+    const parentFieldType = this.props.parentFieldType;
+    // if conditionValue needs to update, do so. else, do nothing.
+    if (parentFieldType === "bool" && isBool === -1) {
+      e.target.value = "Yes";
+    } else if (parentFieldType !== "bool" && isBool > -1) {
+      e.target.value = "";
+    } else {
+      return;
+    }
+
+    this.updateFormField(e);
+  }
+
+  /**
+   * double check the conditions allowed by parentFieldType.
+   * If it changed, we need to update the condition to no longer
+   * keep values that are invalid for its type
+   */
+  updateCondition() {
+    // if condition === params allowed by conditions
+    const isBool = conditions[this.props.parentFieldType].indexOf(
+      this.props.field.condition
+    );
+
+    // if condition needs to update, do so. else, do nothing.
+    if (isBool === -1) {
+      // fake event object and update
+      this.updateFormField({
+        target: {
+          id: "condition_" + this.props.field.key,
+          value: "Equals"
+        }
+      });
+    }
+    return;
+  }
+
+  // hoist the form update event
   updateFormField(e) {
     this.props.updateFormField(e);
   }
@@ -24,29 +89,26 @@ class ConditionInput extends Component {
     const field = this.props.field;
     return (
       <div className="conditional">
-        <label htmlFor={"condition_" + field.fieldKey}>Condition</label>
+        <label htmlFor={"condition_" + field.key}>Condition</label>
         <select
           className="condition"
-          id={"condition_" + field.fieldKey}
+          id={"condition_" + field.key}
           value={field.condition}
           onChange={this.updateFormField}
         >
           {conditions[this.props.parentFieldType].map(option => {
             return (
-              <option
-                value={option}
-                key={"condition_" + field.fieldKey + option}
-                onChange={this.updateFormField}
-              >
+              <option value={option} key={"condition_" + field.key + option}>
                 {option}
               </option>
             );
           })}
         </select>
-        {this.props.parentFieldType === "bool" ? (
+        {//Update the conditionValues to change to match parentFieldType allowances
+        this.props.parentFieldType === "bool" ? (
           <select
             className="conditionValue"
-            id={"conditionValue_" + field.fieldKey}
+            id={"conditionValue_" + field.key}
             value={field.conditionValue}
             onChange={this.updateFormField}
           >
@@ -56,7 +118,7 @@ class ConditionInput extends Component {
         ) : (
           <input
             className="conditionValue"
-            id={"conditionValue_" + field.fieldKey}
+            id={"conditionValue_" + field.key}
             type={this.props.parentFieldType}
             value={field.conditionValue}
             onChange={this.updateFormField}
@@ -67,9 +129,6 @@ class ConditionInput extends Component {
   }
 }
 
-/**
- *
- */
 ConditionInput.propTypes = {
   field: PropTypes.object.isRequired,
   parentFieldType: PropTypes.string,

@@ -10,12 +10,10 @@
 .radioFields {
   display: flex;
   justify-content: flex-start;
-  
 }
 .radio,
 .radio label,
-.radio input
- {
+.radio input {
   display: inline-block;
   width: auto;
   line-height: 21px;
@@ -23,13 +21,15 @@
 
 .radio {
   margin-right: 10px;
+  width: 100px;
 }
 
 .radio input {
   vertical-align: text-bottom;
 }
 
-.PreviewForm input, .PreviewForm select {
+.PreviewForm input,
+.PreviewForm select {
   position: relative;
   border: 1px solid #999;
   padding: 5px;
