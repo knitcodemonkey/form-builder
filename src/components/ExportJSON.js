@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import '../css/exportJSONStyles.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import "../css/exportJSONStyles.css";
 
 class ExportJSON extends Component {
   render() {
-    return <textarea defaultValue={JSON.stringify(this.props.formFields)}></textarea>;
+    return <textarea defaultValue={JSON.stringify(this.props)} />;
   }
 }
 
