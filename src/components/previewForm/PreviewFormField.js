@@ -12,6 +12,10 @@ class FormField extends Component {
     };
   }
 
+  componentWillMount() {
+    console.log(this.props);
+  }
+
   updateFormField(e) {
     // get the current state of the field
     const formField = Object.assign({}, this.state.formField);

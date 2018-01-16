@@ -29,12 +29,12 @@ class FormField extends Component {
       lastId = lastIdArray[lastIdArray.length - 1];
     }
 
-    // Push  a new subField to the end of the stack
+    // Push a default subField to the end of the stack
     const newSubField = {
       positionId: currField.positionId + "_" + (parseInt(lastId, 10) + 1),
       parentId: currField.positionId,
-      condition: "",
-      conditionValue: "",
+      condition: "Equals",
+      conditionValue: currField.type === "bool" ? "Yes" : "",
       question: "",
       type: "bool"
     };
