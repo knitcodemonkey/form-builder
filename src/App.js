@@ -12,59 +12,10 @@ import TabPanel from "./components/tabs/TabPanel";
 
 class App extends Component {
   state = {
-    formFields: [
-      {
-        id: 1,
-        question: "Do you have a car?",
-        type: "bool"
-      },
-      {
-        id: 2,
-        question: "Do you have children?",
-        type: "bool"
-      },
-      {
-        id: 3,
-        parentId: 1,
-        condition: 'Equals',
-        conditionValue: 'Yes',
-        question: "Do you ride the bus?",
-        type: "bool"
-      },
-      {
-        id: 4,
-        parentId: 2,
-        condition: 'Equals',
-        conditionValue: 'Yes',
-        question: "How many children do you have?",
-        type: "number"
-      },
-      {
-        id: 5,
-        parentId: 4,
-        condition: 'Greater Than',
-        conditionValue: 1,
-        question: "Do your children live with you?",
-        type: "bool"
-      },
-      {
-        id: 6,
-        parentId: 4,
-        condition: 'Equals',
-        conditionValue: 1,
-        question: "Does your child live with you?",
-        type: "bool"
-      },
-      {
-        id: 7,
-        parentId: 3,
-        condition: 'Equals',
-        conditionValue: "Yes",
-        question: "How many times, per week, do you ride the bus?",
-        type: "number"
-      }
-    ]
+    formFields: []
   };
+
+  flat = [];
 
   constructor(props) {
     super(props);
@@ -79,8 +30,77 @@ class App extends Component {
     // Get data from local storage
     const storedState = localStorage.getItem("formBuilder");
     if (storedState) {
-      this.setState(formatFlatToTree(JSON.parse(storedState)));
-      return;
+      let parsedState = JSON.parse(storedState);
+      const newState = this.formatFlatToTree(parsedState.formFields);
+      this.setState({ formFields: newState });
+    } else {
+      const formFields = [
+        {
+          id: 1,
+          question: "Do you have a car?",
+          type: "bool"
+        },
+        {
+          id: 2,
+          question: "Do you have children?",
+          type: "bool"
+        },
+        {
+          id: 3,
+          parentId: 1,
+          condition: "Equals",
+          conditionValue: "Yes",
+          question: "Do you ride the bus?",
+          type: "bool"
+        },
+        {
+          id: 4,
+          parentId: 2,
+          condition: "Equals",
+          conditionValue: "Yes",
+          question: "How many children do you have?",
+          type: "number"
+        },
+        {
+          id: 5,
+          parentId: 4,
+          condition: "Greater Than",
+          conditionValue: 1,
+          question: "Do your children live with you?",
+          type: "bool"
+        },
+        {
+          id: 6,
+          parentId: 4,
+          condition: "Equals",
+          conditionValue: 1,
+          question: "Does your child live with you?",
+          type: "bool"
+        },
+        {
+          id: 7,
+          parentId: 3,
+          condition: "Equals",
+          conditionValue: "Yes",
+          question: "How many times, per week, do you ride the bus?",
+          type: "number"
+        },
+        {
+          id: 8,
+          question: "Are you married?",
+          type: "bool"
+        }
+      ];
+      const tree = this.formatFlatToTree(formFields);
+      this.setState({
+        formFields: tree
+      });
+      localStorage.setItem(
+        "formBuilder",
+        JSON.stringify({
+          formFields: tree
+        })
+      );
     }
   }
 
@@ -90,51 +110,104 @@ class App extends Component {
    * @return {object} - array of question objects in a tree format
    */
   formatFlatToTree(fields) {
-    let fieldList = fields.slice();
-    let parents = fields.map((parent, idx) => {
-      if (typeof parent.parentId === 'undefined') {
-        parent.positionId = idx;
-        fieldList.splice(idx, 1);
-        return parent;
-      }
-    }); 
+    let fieldsToUnset = [];
+    let parents = fields
+      .map((parent, idx) => {
+        if (typeof parent.parentId === "undefined") {
+          fieldsToUnset.unshift(idx);
+          return parent;
+        }
+        return false;
+      })
+      .filter(function(parent) {
+        return parent !== false;
+      });
 
-    return buildTree(parents, fieldList);
+    // remove known parents from fieldList
+    // eslint-disable-next-line
+    const fieldList = fields.filter(function(field, idx) {
+      if (fieldsToUnset.indexOf(idx) === -1) {
+        return field;
+      }
+    });
+
+    const tree = this.buildTree(parents, fieldList);
+    return tree;
   }
 
   buildTree(parents, fieldList) {
-    let tree = parents.map((parent) => {
-      let children = fieldList.map((child, childIdx) => {
-        if(child.parentId === parent.id) {
-          child.positionId = parent.positionId + "_" + childIdx;
-          if(parent.subFields) {
-            parent.subFields.push(child);
-          } else {
-            parent['subFields'] = child;
+    let childFieldsToUnset = [];
+    // Build tree using parents as the top level
+    let parentPositionId = 0;
+    const tree = parents.map((parent, parentIdx) => {
+      parent.positionId = parentPositionId++;
+      //Map through each parent to setup subFields
+      parent["subFields"] = fieldList
+        .map((child, childIdx) => {
+          //map through each fieldList item to find children that have a matching parentId
+          if (child.parentId === parent.id) {
+            // assign a positionId for ease of mapping
+            child.positionId = parent.positionId + "_" + childIdx;
+            childFieldsToUnset.push(childIdx);
+            return child;
           }
-          fieldsCopy.splice(childIdx, 1);
-        }
-        return child;
-      });
-      buildTree(children, fieldList);
+          return false;
+        })
+        .filter(function(child) {
+          return child !== false;
+        });
+
+      if (parent.subFields.length === 0) {
+        delete parent.subFields;
+      } else {
+        // remove known children from the list
+        // eslint-disable-next-line
+        const childFieldList = fieldList.filter(function(field, idx) {
+          if (childFieldsToUnset.indexOf(idx) === -1) {
+            return field;
+          }
+        });
+
+        // Now that we have a list of children, let's find out if they have children.
+        this.buildTree(parent["subFields"], childFieldList);
+      }
+
+      // Now that we have the full tree for a parent, return the parent
       return parent;
     });
+
+    // return the whole tree
     return tree;
   }
 
   /**
    * Convert a tree array of objects to a flat array of objects
+   * Updates the scoped this.flat array
    * @param {object} fields
-   * @return {object}
    */
   formatTreeToFlat(fields) {
-    return fields;
+    console.log(fields);
+    if (typeof fields === "object") {
+      this.flat.push(fields);
+    } else {
+      console.log(fields);
+      fields.map(field => {
+        console.log(field);
+        if (field.subFields) {
+          this.formatTreeToFlat(field.subFields);
+          delete field.subFields;
+        }
+        this.flat.push(field);
+        return true;
+      });
+    }
   }
 
   updateData(formFields) {
+    console.log(formFields);
     localStorage.setItem(
       "formBuilder",
-      JSON.stringify({ formFields: formatTreeToFlat(formFields)});
+      JSON.stringify({ formFields: formFields })
     );
     this.setState({ formFields: formFields });
   }
