@@ -17,12 +17,14 @@ class CreateForm extends Component {
   updateField(field, action) {
     // make a copy of the old state so we can create the new state
     let currField = this.props.formFields.slice();
+
     // If the id doesn't exist (only happens when adding a field to the main-level), create it for addField actions
     if (!field) {
       let lastId = -1;
       if (currField.length > 0) {
         lastId = currField[currField.length - 1].positionId;
       }
+      // create new main-level field
       field = {
         question: "",
         type: "bool",

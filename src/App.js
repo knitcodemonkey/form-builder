@@ -9,6 +9,7 @@ import Tabs from "./components/tabs/Tabs";
 import Tab from "./components/tabs/Tab";
 import TabPanels from "./components/tabs/TabPanels";
 import TabPanel from "./components/tabs/TabPanel";
+import prePopulateParams from "./library/prePopulateParams";
 
 class App extends Component {
   state = {
@@ -30,77 +31,28 @@ class App extends Component {
     // Get data from local storage
     const storedState = localStorage.getItem("formBuilder");
     if (storedState) {
-      let parsedState = JSON.parse(storedState);
-      const newState = this.formatFlatToTree(parsedState.formFields);
-      this.setState({ formFields: newState });
+      let newState = JSON.parse(storedState);
+      if (storedState.includes("subFields") === false) {
+        newState = { formFields: this.formatFlatToTree(newState.formFields) };
+      }
+      this.setState(newState);
     } else {
-      const formFields = [
-        {
-          id: 1,
-          question: "Do you have a car?",
-          type: "bool"
-        },
-        {
-          id: 2,
-          question: "Do you have children?",
-          type: "bool"
-        },
-        {
-          id: 3,
-          parentId: 1,
-          condition: "Equals",
-          conditionValue: "Yes",
-          question: "Do you ride the bus?",
-          type: "bool"
-        },
-        {
-          id: 4,
-          parentId: 2,
-          condition: "Equals",
-          conditionValue: "Yes",
-          question: "How many children do you have?",
-          type: "number"
-        },
-        {
-          id: 5,
-          parentId: 4,
-          condition: "Greater Than",
-          conditionValue: 1,
-          question: "Do your children live with you?",
-          type: "bool"
-        },
-        {
-          id: 6,
-          parentId: 4,
-          condition: "Equals",
-          conditionValue: 1,
-          question: "Does your child live with you?",
-          type: "bool"
-        },
-        {
-          id: 7,
-          parentId: 3,
-          condition: "Equals",
-          conditionValue: "Yes",
-          question: "How many times, per week, do you ride the bus?",
-          type: "number"
-        },
-        {
-          id: 8,
-          question: "Are you married?",
-          type: "bool"
-        }
-      ];
-      const tree = this.formatFlatToTree(formFields);
-      this.setState({
-        formFields: tree
-      });
-      localStorage.setItem(
-        "formBuilder",
-        JSON.stringify({
+      // easy pre-population of some fields while coding/testing
+      if (window.location.href.includes("prepopulate=true")) {
+        // create a tree from a flat relational REST API return
+        const tree = this.formatFlatToTree(prePopulateParams);
+        // set this new tree format as the state
+        this.setState({
           formFields: tree
-        })
-      );
+        });
+        // populate the local storage
+        localStorage.setItem(
+          "formBuilder",
+          JSON.stringify({
+            formFields: tree
+          })
+        );
+      }
     }
   }
 
@@ -111,10 +63,12 @@ class App extends Component {
    */
   formatFlatToTree(fields) {
     let fieldsToUnset = [];
+    let parentPositionId = 0;
     let parents = fields
       .map((parent, idx) => {
         if (typeof parent.parentId === "undefined") {
           fieldsToUnset.unshift(idx);
+          parent.positionId = parentPositionId++;
           return parent;
         }
         return false;
@@ -138,16 +92,15 @@ class App extends Component {
   buildTree(parents, fieldList) {
     let childFieldsToUnset = [];
     // Build tree using parents as the top level
-    let parentPositionId = 0;
     const tree = parents.map((parent, parentIdx) => {
-      parent.positionId = parentPositionId++;
       //Map through each parent to setup subFields
+      let childPositionId = 0;
       parent["subFields"] = fieldList
         .map((child, childIdx) => {
           //map through each fieldList item to find children that have a matching parentId
           if (child.parentId === parent.id) {
             // assign a positionId for ease of mapping
-            child.positionId = parent.positionId + "_" + childIdx;
+            child.positionId = parent.positionId + "_" + childPositionId++;
             childFieldsToUnset.push(childIdx);
             return child;
           }
