@@ -67,6 +67,7 @@ class App extends Component {
     let parents = fields
       .map((parent, idx) => {
         if (typeof parent.parentId === "undefined") {
+          // tells us which fields are known parents
           fieldsToUnset.unshift(idx);
           parent.positionId = parentPositionId++;
           return parent;
@@ -77,16 +78,16 @@ class App extends Component {
         return parent !== false;
       });
 
-    // remove known parents from fieldList
+    // Removes known parents from fieldList, which we pass to buildTree.
+    // We don't need to cycle through items we've already identified and placed.
     // eslint-disable-next-line
     const fieldList = fields.filter(function(field, idx) {
       if (fieldsToUnset.indexOf(idx) === -1) {
         return field;
       }
     });
-
-    const tree = this.buildTree(parents, fieldList);
-    return tree;
+    // Gimme the tree format of our questions!
+    return this.buildTree(parents, fieldList);
   }
 
   buildTree(parents, fieldList) {
@@ -101,15 +102,21 @@ class App extends Component {
           if (child.parentId === parent.id) {
             // assign a positionId for ease of mapping
             child.positionId = parent.positionId + "_" + childPositionId++;
-            childFieldsToUnset.push(childIdx);
+            // which children do we need to remove from the master list?
+            // reduces the list as we progress
+            childFieldsToUnset.unshift(childIdx);
             return child;
           }
+          // return a false for children we didn't match so we can
+          // easily remove them in the filter method below.
           return false;
         })
         .filter(function(child) {
+          // remove children with a value of {false}
           return child !== false;
         });
 
+      // if we didn't find any children, let's delete the array.
       if (parent.subFields.length === 0) {
         delete parent.subFields;
       } else {
@@ -139,30 +146,32 @@ class App extends Component {
    * @param {object} fields
    */
   formatTreeToFlat(fields) {
-    console.log(fields);
-    if (typeof fields === "object") {
-      this.flat.push(fields);
-    } else {
-      console.log(fields);
-      fields.map(field => {
-        console.log(field);
-        if (field.subFields) {
-          this.formatTreeToFlat(field.subFields);
-          delete field.subFields;
-        }
-        this.flat.push(field);
-        return true;
-      });
-    }
+    this.flat = [];
+    fields.map(field => {
+      console.log(field.id);
+      if (field.subFields) {
+        console.log(field.id, field.subFields);
+        this.formatTreeToFlat(field.subFields);
+        delete field.subFields;
+      }
+      this.flat.push(field);
+      return true;
+    });
   }
 
   updateData(formFields) {
+    const dontMessWithState = formFields.slice();
+
+    // save state in tree form
     console.log(formFields);
-    localStorage.setItem(
-      "formBuilder",
-      JSON.stringify({ formFields: formFields })
-    );
     this.setState({ formFields: formFields });
+
+    // save to localStorage in flat form
+    this.formatTreeToFlat(dontMessWithState);
+    // localStorage.setItem(
+    //   "formBuilder",
+    //   JSON.stringify({ formFields: this.flat })
+    // );
   }
 
   render() {
