@@ -23,9 +23,9 @@ class ExportJSON extends Component {
           </li>
           <li>A relational database returning an array of objects</li>
           <li>
-            A separate file returning a json string in either a tree or flat
-            configuration. This is triggered by adding clearing localStorage and
-            appending
+            A separate file, returning a json string, in either a tree or flat
+            configuration. This is triggered by, first, clearing localStorage,
+            and second, appending
             <a href="?prePopulateParams=true">?prePopulateParams=true</a> to
             your url.
           </li>
