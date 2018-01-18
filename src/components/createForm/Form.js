@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import AddField from "./AddField.js";
-import "../../css/formFields.css";
+import "./formFields.css";
 
 class Form extends Component {
   constructor(props) {

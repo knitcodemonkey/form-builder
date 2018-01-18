@@ -2,16 +2,20 @@ import React, { Component } from "react";
 import CreateForm from "./components/CreateForm";
 import PreviewForm from "./components/PreviewForm";
 import ExportJSON from "./components/ExportJSON";
-import "./css/styles.css";
+import "./App.css";
 
+// Tabs written by Ryan Florence. Why reinvent the wheel?
 import TabList from "./components/tabs/TabList";
 import Tabs from "./components/tabs/Tabs";
 import Tab from "./components/tabs/Tab";
 import TabPanels from "./components/tabs/TabPanels";
 import TabPanel from "./components/tabs/TabPanel";
-import prePopulateParams from "./library/prePopulateParams";
-import FormatFlatToTree from "./library/treeFlatMapper/formatFlatToTree";
-import FormatTreeToFlat from "./library/treeFlatMapper/formatTreeToFlat";
+// end Tabs
+
+// library files for consuming and formatting data
+import prePopulateParams from "./library/prePopulateParams.json"; // json file with my test form
+import FormatFlatToTree from "./library/treeFlatMapper/formatFlatToTree"; // relational database to tree format
+import FormatTreeToFlat from "./library/treeFlatMapper/formatTreeToFlat"; // tree format to relational database format
 
 class App extends Component {
   state = {
@@ -42,7 +46,7 @@ class App extends Component {
       // easy pre-population of some fields while coding/testing
       if (window.location.href.includes("prepopulate=true")) {
         // create a tree from a flat relational REST API return
-        const tree = new FormatFlatToTree(prePopulateParams);
+        const tree = new FormatFlatToTree(prePopulateParams.formFields);
         // set this new tree format as the state
         this.setState({
           formFields: tree

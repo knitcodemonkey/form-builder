@@ -13,7 +13,6 @@ class FormatTreeToFlat {
    */
   flattenTree(fields) {
     fields.map(field => {
-      console.log(field.id);
       if (field.subFields) {
         console.log(field.id, field.subFields);
         this.flattenTree(field.subFields);

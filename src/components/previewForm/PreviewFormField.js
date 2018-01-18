@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import "../../css/formFields.css";
-import "../../css/previewFields.css";
+//import "./formFields.css";
+import "./previewFields.css";
 
 class FormField extends Component {
   constructor(props) {
@@ -48,8 +48,8 @@ class FormField extends Component {
       let showField = false;
 
       if (
-        this.state.answer.trim() === "" &&
-        currSubField.conditionValue.trim() === ""
+        this.state.answer.length === 0 &&
+        currSubField.conditionValue.length > 0
       ) {
         return false;
       }
@@ -57,17 +57,26 @@ class FormField extends Component {
       // Check to see if the answer qualifies for this subField
       switch (currSubField.condition) {
         case "Equals":
-          if (this.state.answer === currSubField.conditionValue) {
+          if (
+            this.state.answer.toString() ===
+            currSubField.conditionValue.toString()
+          ) {
             showField = true;
           }
           break;
         case "Greater Than":
-          if (this.state.answer > currSubField.conditionValue) {
+          if (
+            parseInt(this.state.answer, 10) >
+            parseInt(currSubField.conditionValue, 10)
+          ) {
             showField = true;
           }
           break;
         case "Less Than":
-          if (this.state.answer < currSubField.conditionValue) {
+          if (
+            parseInt(this.state.answer, 10) <
+            parseInt(currSubField.conditionValue, 10)
+          ) {
             showField = true;
           }
           break;

@@ -1,8 +1,8 @@
 // from Ryan Florence's Compound Components Workshop
-import React, { Component } from 'react';
-import TabPanels from './TabPanels'
-import TabList from './TabList'
-import '../../css/tabStyles.css';
+import React, { Component } from "react";
+import TabPanels from "./TabPanels";
+import TabList from "./TabList";
+import "./tabStyles.css";
 
 export default class Tabs extends Component {
   state = {

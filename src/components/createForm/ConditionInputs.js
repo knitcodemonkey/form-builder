@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import "../../css/formFields.css";
+import "./formFields.css";
 
 /**
  * Passes in the conditions from a separate js file.
