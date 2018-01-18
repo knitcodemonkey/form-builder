@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import AddField from "./AddField";
 import DeleteField from "./DeleteField";
 import ConditionInputs from "./ConditionInputs";
-import "../../css/formFields.css";
+import "./formFields.css";
 
 class FormField extends Component {
   constructor(props) {

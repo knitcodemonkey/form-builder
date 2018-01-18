@@ -77,7 +77,8 @@ button {
 
 @media (max-width: 480px) {
   label,
-  input,
+  input[type="text"],
+  input[type="number"],
   select,
   input.condition,
   select.condition,
@@ -99,7 +100,8 @@ button {
 
 @media (min-width: 480px) {
   label,
-  input,
+  input[type="text"],
+  input[type="number"],
   select,
   input.condition,
   select.condition,
@@ -108,7 +110,8 @@ button {
     display: inline-block;
   }
 
-  input,
+  input[type="text"],
+  input[type="number"],
   select {
     width: calc(100% - 80px);
   }

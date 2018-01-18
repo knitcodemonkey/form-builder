@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import FormField from "./previewForm/PreviewFormField";
-import "../css/previewFields.css";
+import "./previewForm/previewFields.css";
 
 const PreviewForm = (props: { formFields: Array }) => (
   <div className="PreviewForm">

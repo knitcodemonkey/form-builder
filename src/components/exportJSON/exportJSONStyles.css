@@ -1,0 +1,26 @@
+.exportJSON {
+  line-height: 21px;
+}
+
+.exportJSON hr {
+  margin: 25px 0 20px;
+}
+
+.exportJSON textarea {
+  width: 100%;
+  min-height: 300px;
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.exportJSON label {
+  width: 100%;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.exportJSON label::after {
+  content: ":";
+}
