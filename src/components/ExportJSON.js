@@ -25,9 +25,11 @@ class ExportJSON extends Component {
           <li>
             A separate file, returning a json string, in either a tree or flat
             configuration. This is triggered by, first, clearing localStorage,
-            and second, appending
-            <a href="?prePopulateParams=true">?prePopulateParams=true</a> to
-            your url.
+            and second, appending{" "}
+            <a href={window.location.href + "?prepopulate=true"}>
+              ?prepopulate=true
+            </a>{" "}
+            to your url.
           </li>
         </ul>
         <p>
