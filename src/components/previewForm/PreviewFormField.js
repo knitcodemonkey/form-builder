@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 //import "./formFields.css";
 import "./previewFields.css";
+import BoolField from "../inputTypes/BoolField";
 
 class FormField extends Component {
   constructor(props) {
@@ -12,7 +13,11 @@ class FormField extends Component {
     };
   }
 
-  updateFormField(e) {
+  updateFormField(e, answer) {
+    answer = answer || false;
+    if (answer) {
+      this.setState({ answer });
+    }
     // get the current state of the field
     const formField = Object.assign({}, this.state.formField);
 
@@ -102,28 +107,11 @@ class FormField extends Component {
             <label htmlFor={field.key + "_input"}>{field.question}</label>
             {// if bool, load radios. if not, load input
             field.type === "bool" ? (
-              <div className="radioFields">
-                <div className="radio">
-                  <input
-                    type="radio"
-                    id={field.key + "_Yes"}
-                    name={field.key + "_question"}
-                    value="Yes"
-                    onChange={e => this.setState({ answer: e.target.value })}
-                  />
-                  <label htmlFor={field.key + "_Yes"}>Yes</label>
-                </div>
-                <div className="radio">
-                  <input
-                    type="radio"
-                    id={field.key + "_No"}
-                    name={field.key + "_question"}
-                    value="No"
-                    onChange={e => this.setState({ answer: e.target.value })}
-                  />
-                  <label htmlFor={field.key + "_No"}>No</label>
-                </div>
-              </div>
+              <BoolField
+                field={field}
+                mode="display"
+                updateFormField={this.updateFormField}
+              />
             ) : (
               <input
                 id={field.key + "_input"}

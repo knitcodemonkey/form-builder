@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import BoolField from "../inputTypes/BoolField";
 import "./formFields.css";
 
 /**
@@ -106,15 +107,11 @@ class ConditionInput extends Component {
         </select>
         {//Update the conditionValues to change to match parentFieldType allowances
         this.props.parentFieldType === "bool" ? (
-          <select
-            className="conditionValue"
-            id={"conditionValue_" + field.key}
-            value={field.conditionValue}
-            onChange={this.updateFormField}
-          >
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
+          <BoolField
+            field={field}
+            mode="edit"
+            updateFormField={this.updateFormField}
+          />
         ) : (
           <input
             className="conditionValue"
